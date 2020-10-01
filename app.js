@@ -3,18 +3,19 @@ const morgan = require("morgan");
 const app = express();
 const path = require("path");
 const { db, Page, User } = require("./models");
-const layout = require("./views/layout");
 const staticMiddleWare = express.static(path.join(__dirname, "/public"));
+const wikiRoutes = require("./routes/wiki");
+const usersRoutes = require("./routes/users");
 
 app.use(morgan("dev"));
-
 app.use(staticMiddleWare);
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use("/wiki", wikiRoutes);
+app.use("/users", usersRoutes);
 
 app.get("/", (req, res) => {
-  res.send(layout(""));
+  res.redirect("/wiki");
 });
 
 db.authenticate().then(() => {
@@ -22,12 +23,12 @@ db.authenticate().then(() => {
 });
 
 async function inIt() {
-  await db.sync(/*{ force: true }*/);
+  await db.sync({ force: true });
 }
 
 inIt();
 
-const PORT = 1337;
+const PORT = 3000;
 
 app.listen(PORT, () => {
   console.log(`App listening in port ${PORT}`);
