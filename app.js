@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const path = require("path");
-const { db } = require("./models");
+const { db, Page, User } = require("./models");
 const layout = require("./views/layout");
 const staticMiddleWare = express.static(path.join(__dirname, "/public"));
 
@@ -20,6 +20,12 @@ app.get("/", (req, res) => {
 db.authenticate().then(() => {
   console.log("connected to the database");
 });
+
+async function inIt() {
+  await db.sync(/*{ force: true }*/);
+}
+
+inIt();
 
 const PORT = 1337;
 
